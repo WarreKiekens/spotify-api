@@ -193,6 +193,12 @@
               });
               artistRender = artistRender.slice(0, -2);
 
+              // Grab audio url
+              previewUrl = item["preview_url"];
+              if (previewUrl == null) {
+                previewUrl = "";
+              }
+
               // Render current track
               $("#renderContent").append(
                 `
@@ -208,7 +214,7 @@
 
                       <div class="w-100 h-75 align-items-center d-flex justify-content-center">
                             <audio controls onplay="pauseAudio(this)"; class="w-100">
-                              <source src="${item["preview_url"]}" />
+                              <source src="${previewUrl}" />
                             </audio>
                         </div>
                     </div>
