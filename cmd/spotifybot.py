@@ -64,8 +64,8 @@ if total > 300:
         resume = input(f"\nAre you sure you want to search for {str(total)} artists?\nThis will query the api a total of {math.ceil(int(total)/20)} times. y/n ")
     if resume.lower() == "n":
         quit()
-    else:
-        print("Fetching results...")
+
+print(f"Fetching {str(total)} results...")
 
 # Visualizing Content
 t = PrettyTable()
