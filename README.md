@@ -20,7 +20,7 @@ Navigate to the cmd project.
 `$ cd cmd`  
 
 Create the virtual environment which we will use to install the modules in.  
-`$ python -v venv .env`  
+`$ python -m venv .env`  
 
 Activate the virtual environment.  
 `$ .env\Scripts\activate`  
