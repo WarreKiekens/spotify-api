@@ -10,9 +10,15 @@ with open("credentials.json") as f:
 clientId = data["client-id"]
 clientSecret = data["client-secret"]
 
+def validation(input):
+    return (input == "") or not (input.replace(" ", "").isalnum())
+
 artist = ""
-while artist == "":
+while validation(artist):
     artist = input("Which artist do you want to search for? ")
+
+    if validation(artist):
+        print("- Not a valid input, please try again.\n")
 
 # Make POST request and store auth token
 response = requests.post("https://accounts.spotify.com/api/token", {
