@@ -148,7 +148,6 @@
 
     // Function which only allows 1 audio file to be played at all times
     function pauseAudio(obj) {
-      console.log("pause func");
       $("audio").not(obj).each(function(index, audio) {
         audio.pause();
       });
@@ -259,11 +258,8 @@
                 <div class="col-12 col-sm-6 col-md-6 col-lg-3 px-1 py-2">
                   <div class="card d-inline-block" style="max-width: 230px">
                     <img class="card-img-top" src="${imageUrl}" alt="Card image cap">
-                    <div class="card-body">
+                    <div class="card-body pb-0">
                       <h5 class="card-title">${item["name"]}</h5>
-                      <p class="card-text">
-                        Text here
-                      </p>
                     </div>
                     <ul class="list-group list-group-flush">
                       <li class="list-group-item"><i class="fas fa-fire"></i> Popularity: ${item["popularity"]}</li>
