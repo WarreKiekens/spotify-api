@@ -39,7 +39,7 @@ Fill in your client-id and client-secret in [credentials.json](cmd/credentials.j
 Last step is to run the program, you can do this with following command:  
 `(.env) $ python spotifybot.py`  
 or when outside environment use this instead:  
-`.env\Scripts\python.exe spotifybot.py`  
+`$ .env\Scripts\python.exe spotifybot.py`  
   
 ![](images/cmd.png)  
   
