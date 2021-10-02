@@ -1,7 +1,9 @@
 # spotify-api
 ## Description
 This is an assignment I made for my course: Emerging Technologies. I had to create a cmd-interface which can query the spotify api. I used [python3.8](https://www.python.org/downloads/release/python-380/) as underlying engine. 
-
+  
+![](images/overview.png)  
+  
 I made my own expension on this assignment, which is the webapplication. I used javascript to query the spotify api and visualize it in the brower. You can search for tracks and artists.
 
 ## Setup
@@ -33,10 +35,18 @@ Fill in your client-id and client-secret in [credentials.json](cmd/credentials.j
   "client-id": "",  
   "client-secret": ""  
 }  
-```
+```  
+Last step is to run the program, you can do this with following command:  
+`$ python spotifybot.py`  
+  
+  
+![](images/cmd.png)  
+  
 ## Webapplication
 ### Setup
 No extra installation is required, you only need to open the index.html and fill in the form.  
 `$ webapplication\index.html`  
+  
+![](images/app.png)  
 
 
