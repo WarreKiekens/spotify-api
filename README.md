@@ -6,7 +6,7 @@ I made my own expension on this assignment, which is the webapplication. I used 
 
 ## Setup
 **1. Request api keys**  
-First you will need to [request an application](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app). Register a spotify account find you client-id and client-secret.
+First you will need to [request an application](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app). Register a spotify account and find your client-id and client-secret.
 
 **2. Download repo**  
 Next, you need to download this repo. You can do so with the following command:  
