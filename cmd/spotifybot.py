@@ -61,11 +61,12 @@ total = page["artists"]["total"]
 if total > 300:
     resume = ""
     while resume.lower() not in ["y", "n"]:
-        resume = input(f"\nAre you sure you want to search for {str(total)} artists?\nThis will query the api a total of {math.ceil(int(total)/20)} times. y/n ")
+        resume = input(f"\nAre you sure you want to search for {str(total)} artists?\nThis will query the api a total of {math.ceil(int(total)/20)} times. The max amount of request is limited to 1000! y/n ")
     if resume.lower() == "n":
         quit()
 
 print(f"Fetching {str(total)} results...")
+
 
 # Visualizing Content
 t = PrettyTable()
@@ -78,13 +79,14 @@ def addPageToTable(artists):
 
 # Iterate over all "pages", each page contains max. 20 artists
 nextUrl = page["artists"]["next"]
-while nextUrl != None:
+while (nextUrl != None) and not (int(page["artists"]["offset"]) >= 980):
     # Add each artist from the page to the PrettyTable
     addPageToTable(page["artists"]["items"])
 
     # Get artists of next pages url
     page = requests.get(nextUrl, headers=headers).json()
     nextUrl = page["artists"]["next"]
+
 
 # Add artists from the last page to the PrettyTable
 addPageToTable(page["artists"]["items"])
