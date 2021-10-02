@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>Spotify Bot</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Authored by Warre Kiekens">
+
+  <!-- Import Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat&display=swap" rel="stylesheet">
+
+  <!-- Import stylesheets -->
+  <link rel="stylesheet" href="css/bootstrap4.4.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+  <!-- Import own stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg position-sticky navbar-light bg-light" style="z-index: 999; top: 0;">
+
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="d-flex align-items-center justify-content-center brand-center">
+      <a class="navbar-brand font-weight-bold" href="#">Spotify Bot <i class="fab fa-spotify"></i></a>
+    </div>
+
+    <div class="collapse navbar-collapse position-relative" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">home</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <section class="mb-4 container">
+
+    <!--Section heading-->
+    <h2 class="font-weight-bold my-4">Search</h2>
+    <!--Section description-->
+    <p class="">This application is designed to work with the <a href="https://developer.spotify.com/documentation/web-api/">spotify api</a>. It uses post/get javascript requests as an underlying engine to search and collect data from the api.</p>
+    <p class="mb-4">It's easy to use, just fill in the credentials and submit the form below.</p>
+
+    <div class="row">
+
+      <form class="col-12" onsubmit="return submitSearch()">
+        <div class="col-12 mb-2">
+          <div class="input-group my-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-hashtag mr-2"></i> Client Id
+              </span>
+            </div>
+            <input id="clientId" class="form-control" type="text" placeholder="Client id" required>
+
+          </div>
+
+          <div class="input-group my-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">
+                <i class="fas fa-key mr-2"></i> Client Secret
+              </span>
+            </div>
+            <input id="clientSecret" class="form-control p-auto" type="text" placeholder="Client Secret" required>
+          </div>
+        </div>
+
+
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5 mb-2">
+          <select class="form-control" id="t">
+            <option>track</option>
+            <option>artist</option>
+          </select>
+        </div>
+
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5">
+
+          <div class="input-group my-3">
+            <input id="q" class="form-control" type="search" placeholder="Ex. Drake, Faded, ..." aria-label="Search" required>
+
+            <div class="input-group-append">
+              <button class="btn btn-outline-success" type="submit">Search <i class="fas fa-search"></i></button>
+            </div>
+          </div>
+
+        </div>
+      </form>
+
+      <hr>
+
+      <div id="renderContent" class="row mt-3 mx-0">
+
+      </div>
+
+    </div>
+
+
+
+  </section>
+
+  <hr class="mt-5 mb-4">
+
+  <footer class="page-footer font-small py-4 my-5">
+    <div class="container">
+      <ul class="list-unstyled list-inline text-center">
+        <li class="list-inline-item">
+          <a class="btn-floating btn-fb mx-1">
+            <i class="fab fa-facebook-f"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-tw mx-1">
+            <i class="fab fa-twitter"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-gplus mx-1">
+            <i class="fab fa-google-plus-g"> </i>
+          </a>
+        </li>
+        <li class="list-inline-item">
+          <a class="btn-floating btn-li mx-1">
+            <i class="fab fa-linkedin-in"> </i>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="footer-copyright text-center pt-0 pb-3">© 2020 COPYRIGHT:
+      <a href=""> WARRE KIEKENS</a>
+    </div>
+
+  </footer>
+  <!-- Footer -->
+
+
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+  <script type="text/javascript">
+    var global = {};
+
+    // Function which only allows 1 audio file to be played at all times
+    function pauseAudio(obj) {
+      console.log("pause func");
+      $("audio").not(obj).each(function(index, audio) {
+        audio.pause();
+      });
+    }
+
+    // Function which makes GET requests to spotify api
+    function ajaxRequest(url, data, headers) {
+      $.ajax({
+        url: url,
+        type: 'get',
+        data: data,
+        headers: headers,
+        dataType: 'json',
+        success: function(data) {
+          var items = data[Object.keys(data)[0]]["items"];
+          var nextPage = data[Object.keys(data)[0]]["next"];
+
+          if (global.type == "track") {
+            // Iterate over all tracks on 1 page
+            items.forEach((item, i) => {
+
+              // Grab track duration
+              let duration = new Date(item["duration_ms"]);
+              if (duration.getUTCHours() > 0) {
+                duration = `${duration.getUTCHours()}:${duration.getUTCMinutes()}:${duration.getUTCSeconds()}`;
+              } else {
+                duration = `${duration.getUTCMinutes()}:${duration.getUTCSeconds()}`;
+              }
+
+              // Grab image url
+              let imageUrl = item["album"]["images"][0];
+              if (imageUrl == undefined) {
+                imageUrl = "assets/notfound.svg";
+              } else {
+                imageUrl = imageUrl["url"];
+              }
+
+              // Grab artist
+              let artists = item["album"]["artists"];
+              let artistRender = "";
+              artists.forEach((artist, a) => {
+                artistRender = artistRender + artist["name"] + ", ";
+              });
+              artistRender = artistRender.slice(0, -2);
+
+              // Render current track
+              $("#renderContent").append(
+                `
+
+                <div class="col-12 col-sm-6 col-md-6 col-lg-4 px-1 py-2">
+                  <div class="card d-inline-block w-100">
+                    <img class="card-img-top" src="${imageUrl}" alt="Card image cap">
+                    <div class="card-body pt-2 pb-0" style="height: 160px!important">
+
+                      <div class="w-100 h-25">
+                        <h5 class="card-title mb-0">${item["name"]}</h5>
+                      </div>
+
+                      <div class="w-100 h-75 align-items-center d-flex justify-content-center">
+                            <audio controls onplay="pauseAudio(this)"; class="w-100">
+                              <source src="${item["preview_url"]}" />
+                            </audio>
+                        </div>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item"><i class="fas fa-fire"></i> Popularity: ${item["popularity"]}</li>
+                      <li class="list-group-item"><i class="fas fa-stopwatch"></i> Duration: ${duration}</li>
+                      <li class="list-group-item"><i class="fas fa-compact-disc"></i> Album: <a target="_blank" href="https://open.spotify.com/album/${item["album"]["id"]}">${item["album"]["name"]}</a></li>
+                      <li class="list-group-item"><i class="fas fa-user-check"></i> Artists: ${artistRender}</li>
+                    </ul>
+                    <div class="card-body">
+                      <a target="_blank" href="https://open.spotify.com/track/${item["id"]}" class="card-link">View on spotify <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                  </div>
+                </div>
+
+              `
+              );
+            });
+          } else if (global.type == "artist") {
+
+            // Iterate over all artists on 1 page
+            items.forEach((item, i) => {
+
+              // Grab image url
+              let imageUrl = item["images"][0];
+              if (imageUrl == undefined) {
+                imageUrl = "assets/notfound.svg";
+              } else {
+                imageUrl = imageUrl["url"];
+              }
+
+              // Grab genres
+              let genreRender = "";
+              let genres = item["genres"];
+              if (genres.length == 0) {
+                genreRender = "/";
+              } else {
+                genres.forEach((genre, g) => {
+                  genreRender = genreRender + genre + ", ";
+                });
+                genreRender = genreRender.slice(0, -2);
+              }
+
+              // Render current artist
+              $("#renderContent").append(
+                `
+                <div class="col-12 col-sm-6 col-md-6 col-lg-3 px-1 py-2">
+                  <div class="card d-inline-block" style="max-width: 230px">
+                    <img class="card-img-top" src="${imageUrl}" alt="Card image cap">
+                    <div class="card-body">
+                      <h5 class="card-title">${item["name"]}</h5>
+                      <p class="card-text">
+                        Text here
+                      </p>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item"><i class="fas fa-fire"></i> Popularity: ${item["popularity"]}</li>
+                      <li class="list-group-item"><i class="fas fa-users"></i> Followers: ${item["followers"]["total"].toLocaleString()}</li>
+                      <li class="list-group-item"><i class="fas fa-book"></i> Genres: ${genreRender}</li>
+                    </ul>
+                    <div class="card-body">
+                      <a target="_blank" href="https://open.spotify.com/artist/${item["id"]}" class="card-link">View on spotify <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                  </div>
+                </div>
+              `
+              );
+            });
+
+          };
+
+          // Add "show more" text
+          if (nextPage != null) {
+            $("#renderContent").append(`<p id="showMore" class="col-12 text-center pt-5 pb-3"><a href='javascript:showMore("${nextPage}")'>Show more ...</a></p>`);
+          }
+        },
+        // Error handling
+        error: function(XMLHttpRequest, textStatus, errorThrown) {
+          console.error(textStatus, XMLHttpRequest.status, errorThrown);
+        }
+      });
+
+    }
+
+    function submitSearch() {
+      // Clear content because a new search is submitted
+      $("#renderContent").html("");
+
+      // Read credentials
+      let clientId = $("#clientId").val();
+      let clientSecret = $("#clientSecret").val();
+
+      // Authorize
+      $.post('https://accounts.spotify.com/api/token', {
+        'grant_type': 'client_credentials',
+        'client_id': clientId,
+        'client_secret': clientSecret,
+      }, function(response) {
+
+        var headers = {
+          'Authorization': response["token_type"] + " " + response["access_token"],
+        };
+
+        global.headers = headers;
+
+        // Get all data (track and query)
+        var t = $("#t").val();
+        var q = $("#q").val();
+
+        global.type = t;
+
+        data = {
+          'type': t,
+          'q': q,
+        }
+
+        ajaxRequest("https://api.spotify.com/v1/search", data, headers)
+
+      });
+
+      // Prevents from submitting form
+      return false;
+    }
+
+    // Queries for next page
+    function showMore(url) {
+      ajaxRequest(url, undefined, global.headers)
+      $("#showMore").remove();
+    }
+  </script>
+
+</body>
+
+</html>
